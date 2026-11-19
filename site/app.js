@@ -81,7 +81,7 @@
       return '<div class="ed-none"><p>' + esc(e.none) + '</p>' +
         (state.compare ? '' : '<p><button type="button" class="btn" data-goed="' + (ed === '2014' ? '2024' : '2014') + '" data-id="' + t.id + '">Read the ' + (ed === '2014' ? '2024' : '2014') + ' rule</button></p>') + '</div>';
     }
-    return '<div class="srd">' + e.html + '</div><p class="src">Source: ' + ED_SRC[ed] + ' (CC BY 4.0)</p>';
+    return '<div class="srd" data-dice data-links>' + e.html + '</div><p class="src">Source: ' + ED_SRC[ed] + ' (CC BY 4.0)</p>';
   }
   function body(t) {
     var h = '';

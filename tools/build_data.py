@@ -88,6 +88,10 @@ def inline(t):
     t = re.sub(r"(?<![\w*])\*(?=\S)(.+?)(?<=\S)\*(?![\w*])", r"<i>\1</i>", t)
     t = re.sub(r"(?<![\w])_(?=\S)(.+?)(?<=\S)_(?![\w])", r"<i>\1</i>", t)
     t = t.replace("</b> <b>", " ")
+    # italic run-in headings ("Slow.", "What Can You See?") are not spell or item names: keep links.js off them
+    # (links.js tests data-nolink on the italic's parents, so it goes on a wrapper)
+    t = re.sub(r"<b><i>(.*?)</i></b>", r"<b data-nolink><i>\1</i></b>", t)
+    t = re.sub(r"<i>([^<]*[.?!:])</i>", r"<span data-nolink><i>\1</i></span>", t)
     return t
 
 def clean(t):
