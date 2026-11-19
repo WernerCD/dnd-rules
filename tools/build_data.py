@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "source"
 OUT = ROOT / "site" / "rules.js"
+SEARCH = ROOT / "site" / "search.json"
 
 # ---------------------------------------------------------------- sources
 B14 = {x["index"]: x["desc"] for x in json.loads((SRC / "5ebits-2014-rule-sections.json").read_text(encoding="utf-8"))}
@@ -448,6 +449,26 @@ def main():
          json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n"
     OUT.write_text(js, encoding="utf-8")
     print(f"rules.js: {len(out)} topics, {len(js) // 1024} KB")
+    write_search(out)
+
+# hub search (STYLE.md 6j): names and short facts only, no rules text
+KIND = {"cond": "Condition", "act": "Action"}
+AREA = {"cond": "Condition", "act": "Action", "combat": "Combat rule", "dmg": "Damage and healing rule",
+        "spell": "Spellcasting rule", "explore": "Exploration rule"}
+
+def write_search(topics):
+    items = []
+    for t in topics:
+        if "none" in t["e14"]: note = "2024 rules only"
+        elif "none" in t["e24"]: note = "2014 rules only"
+        elif t.get("chg"): note = "changed in 2024"
+        else: note = "2014 and 2024"
+        items.append({"n": t["title"], "t": f"{AREA[t['cat']]}, {note}",
+                      "k": KIND.get(t["cat"], "Rule"), "u": "#" + t["id"]})
+    assert len({i["n"] for i in items}) == len(items), "duplicate names in search.json"
+    js = json.dumps({"v": 1, "items": items}, ensure_ascii=False, separators=(",", ":"))
+    SEARCH.write_text(js + "\n", encoding="utf-8")
+    print(f"search.json: {len(items)} entries, {len(js) // 1024} KB")
 
 if __name__ == "__main__":
     main()

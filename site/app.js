@@ -156,7 +156,9 @@
     if (document.activeElement !== search) search.value = state.q;
   }
   function writeUrl() {
-    var p = new URLSearchParams();
+    // keep parameters this page doesn't own (e.g. ?sw=1, ?fresh=1 used by shared scripts and tests)
+    var p = new URLSearchParams(location.search);
+    ['ed', 'cat', 'q', 'chg', 'cmp'].forEach(function (k) { p.delete(k); });
     if (state.manual) p.set('ed', state.ed);
     if (state.cat !== 'all') p.set('cat', state.cat);
     if (state.q) p.set('q', state.q);
