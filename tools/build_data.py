@@ -467,8 +467,10 @@ def write_search(topics):
         elif "none" in t["e24"]: note = "2014 rules only"
         elif t.get("chg"): note = "changed in 2024"
         else: note = "2014 and 2024"
-        items.append({"n": t["title"], "t": f"{AREA[t['cat']]}, {note}",
-                      "k": KIND.get(t["cat"], "Rule"), "u": "#" + t["id"]})
+        it = {"n": t["title"], "t": f"{AREA[t['cat']]}, {note}", "k": KIND.get(t["cat"], "Rule"), "u": "#" + t["id"]}
+        # u follows the reader's own edition choice; 2014 text in other tools opens the 2014 rule (STYLE 6j)
+        if "none" not in t["e14"]: it["u14"] = "?ed=2014#" + t["id"]
+        items.append(it)
     assert len({i["n"] for i in items}) == len(items), "duplicate names in search.json"
     js = json.dumps({"v": 1, "items": items}, ensure_ascii=False, separators=(",", ":"))
     SEARCH.write_text(js + "\n", encoding="utf-8")
