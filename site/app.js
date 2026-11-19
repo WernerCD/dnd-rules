@@ -204,7 +204,8 @@
   var qTimer;
   search.addEventListener('input', function () {
     clearTimeout(qTimer);
-    qTimer = setTimeout(function () { state.q = search.value.trim(); render(search); }, 120);
+    state.q = search.value.trim();   // update now; only the redraw waits (a chip clicked meanwhile must not restore the old text)
+    qTimer = setTimeout(function () { render(search); }, 120);
   });
   search.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && search.value) { search.value = ''; state.q = ''; render(search); e.preventDefault(); }
