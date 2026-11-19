@@ -244,8 +244,14 @@
     try { history.pushState(null, '', '#' + id); } catch (er) { /* */ }
     goTo(id);
   });
-  window.addEventListener('hashchange', function () { var id = location.hash.slice(1); if (BY_ID[id]) goTo(id); });
-  window.addEventListener('popstate', function () { var id = location.hash.slice(1); if (BY_ID[id]) goTo(id, { instant: true }); });
+  /* #prone and #condition-prone both open a condition (the Character Sheet links the second form) */
+  function hashId() {
+    var h = ''; try { h = decodeURIComponent(location.hash.slice(1)).toLowerCase(); } catch (e) { h = location.hash.slice(1); }
+    var m = h.match(/^condition-(.+)$/);
+    return m && BY_ID[m[1]] && BY_ID[m[1]].cat === 'cond' ? m[1] : h;
+  }
+  window.addEventListener('hashchange', function () { var id = hashId(); if (BY_ID[id]) goTo(id); });
+  window.addEventListener('popstate', function () { var id = hashId(); if (BY_ID[id]) goTo(id, { instant: true }); });
 
   /* the header picker or another tab changed the character: follow its edition unless the user picked one here */
   if (window.DndChar) DndChar.onChange(function (ch) {
@@ -272,6 +278,6 @@
   if (window.ResizeObserver) new ResizeObserver(setCtlH).observe(ctl); else window.addEventListener('resize', setCtlH);
 
   render();
-  var h0 = location.hash.slice(1);
+  var h0 = hashId();
   if (BY_ID[h0]) goTo(h0, { instant: true });
 })();
